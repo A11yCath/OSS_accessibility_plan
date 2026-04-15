@@ -12,7 +12,7 @@
 <header class="site-header">
 <span class="dept">Colorado Department of Public Safety</span>
 <h1>Office of School Safety Digital Accessibility Plan</h1>
-<span class="version-badge">v5.8 · April 2026</span>
+<span class="version-badge">v6.0 · April 2026</span>
 </header>
 <aside class="sidebar">
 <nav aria-label="Document sections">
@@ -33,7 +33,7 @@
 </nav>
 <div class="meta">
 <p>Prepared by: Catherine Stager - Office of School Safety</p>
-<p>Version: 5.8</p>
+<p>Version: 6.0</p>
 <p>Target Compliance: Immediate (State Grace Period Expired) / April 24, 2026 (Federal)</p>
 </div>
 </aside>
@@ -136,7 +136,7 @@ This approach prioritizes access to current information while maintaining availa
 <tbody>
 <tr>
 <td>Webmaster</td>
-<td>Executes spreadsheet updates in Drupal. Submits and manages support tickets with Tyler Technologies (CMS vendor) to implement the required backend automation and gateway architecture.</td>
+<td>Deploys the front-end JavaScript array to manage legacy content compliance. Submits and manages support tickets with Tyler Technologies to implement sustainable CMS data architecture (External Document Media Entities) for future publishing.</td>
 </tr>
 <tr>
 <td>Accessibility Expert</td>
@@ -144,70 +144,80 @@ This approach prioritizes access to current information while maintaining availa
 </tr>
 <tr>
 <td>Director</td>
-<td>Holds ultimate accountability for project outcomes and legal compliance. Approves data-driven prioritization and receives regular progress reports from the Webmaster and Accessibility Expert.</td>
+<td>Holds ultimate accountability for project outcomes and legal compliance. Approves data-driven prioritization and receives regular progress reports.</td>
 </tr>
 </tbody>
 </table>
 
-<h3>Preferred Technical Implementation: Automated Boolean Ticketing Workflow</h3>
-<p>To maximize efficiency and reduce human error, OSS utilizes a structured database approach for archiving content. Because the site is hosted on a vendor-managed Drupal platform (Tyler Technologies), the Webmaster must submit a formal development ticket to establish the architecture.</p>
+<h3>Dual-Track Implementation Strategy</h3>
+<p>Due to the presence of ~1,500 legacy PDFs hosted on mapped external Apache servers (with extensive URL aliases), OSS utilizes a two-phased technical strategy. Phase 1 achieves immediate compliance for legacy files without manual link editing. Phase 2 establishes a sustainable CMS data structure for future content.</p>
 
-<h4>Step 1: The Vendor Ticket Request</h4>
-<p>The Webmaster will submit a ticket to Tyler Technologies requesting the following three deliverables:</p>
-<ol>
-  <li><strong>Database Field:</strong> Add a boolean checkbox on Document/Media entities within Drupal (Requested Machine Name: <code>field_is_archived</code>).</li>
-  <li><strong>Automated Trigger:</strong> When checked, Drupal must automatically append the text "(Archived)" to the front-end link output.</li>
-  <li><strong>Event Interception:</strong> Build a global JavaScript listener using the native HTML5 <code>&lt;dialog&gt;</code> element to trap focus. It must detect clicks on these archived links, utilize <code>event.preventDefault();</code> to pause the document load, and trigger the accessible Gateway modal containing OSS-approved disclaimer text.</li>
-</ol>
+<h4>Phase 1: Automated Legacy Clean-Up (Client-Side JavaScript)</h4>
+<p>To avoid manually editing 1,500 links, the Webmaster will deploy a global JavaScript file (via the theme or Tag Manager). This script contains an array of the exact legacy URLs exported from the Master Inventory Spreadsheet. It scans the page, appends "(Archived)" to any matching link, and uses a native HTML5 <code>&lt;dialog&gt;</code> to intercept clicks and enforce informed consent.</p>
 
 <div class="callout callout-note">
-<strong>Ticket Reference Code for Tyler Technologies</strong>
-<p>The Webmaster should provide the following optimized HTML/JS logic to TylerTech within the support ticket to ensure native focus-trapping and semantic accessibility standards are met:</p>
-<pre><code>&lt;!-- Native HTML5 Gateway Modal Template --&gt;
-&lt;dialog id="archiveModal" class="modal-dialog" aria-labelledby="modalTitle"&gt;
-    &lt;h2 id="modalTitle" class="modal-title"&gt;Historical Document Archive&lt;/h2&gt;
-    &lt;p&gt;This document is historically archived. It has not been updated for WCAG 2.1 AA compliance. 
-    It is retained for reference purposes only and is not required for current state services.&lt;/p&gt;
-    &lt;p&gt;To request an accessible version of this document within 3 to 5 business days, please use our accommodation form.&lt;/p&gt;
-    &lt;div class="modal-actions"&gt;
-        &lt;a href="https://oss.colorado.gov/accessibility" class="btn btn-primary"&gt;Request Accessible Copy&lt;/a&gt;
-        &lt;a href="#" class="btn btn-secondary" id="btnProceed" target="_blank"&gt;Proceed to PDF&lt;/a&gt;
-        &lt;button type="button" class="btn btn-secondary" id="btnCancel"&gt;Cancel&lt;/button&gt;
-    &lt;/div&gt;
-&lt;/dialog&gt;
+<strong>Phase 1: Webmaster JavaScript Architecture</strong>
+<p>The Webmaster will export the column of legacy URLs from the Triage Spreadsheet into the <code>archivedPDFs</code> array below.</p>
+<pre><code>document.addEventListener("DOMContentLoaded", function() {
+    // 1. Master List generated from OSS Triage Spreadsheet
+    const archivedPDFs = [
+        "https://cdpsdocs.state.co.us/safeschools/legacy-doc-1.pdf",
+        "https://oss.colorado.gov/alias-folder/meeting-notes.pdf"
+        // ... Webmaster pastes all ~1,500 URLs here
+    ];
 
-&lt;!-- Interceptor Script --&gt;
-&lt;script&gt;
+    // 2. Inject Native HTML5 Modal
+    const modalHTML = `
+        &lt;dialog id="archiveModal" class="modal-dialog" aria-labelledby="modalTitle"&gt;
+            &lt;h2 id="modalTitle" class="modal-title"&gt;Historical Document Archive&lt;/h2&gt;
+            &lt;p&gt;This document is historically archived. It has not been updated for WCAG 2.1 AA compliance. It is retained for reference purposes only and is not required for current state services.&lt;/p&gt;
+            &lt;p&gt;To request an accessible version of this document within 3 to 5 business days, please use our accommodation form.&lt;/p&gt;
+            &lt;div class="modal-actions"&gt;
+                &lt;a href="https://oss.colorado.gov/accessibility" class="btn btn-primary"&gt;Request Accessible Copy&lt;/a&gt;
+                &lt;a href="#" class="btn btn-secondary" id="btnProceed" target="_blank"&gt;Proceed to PDF&lt;/a&gt;
+                &lt;button type="button" class="btn btn-secondary" id="btnCancel"&gt;Cancel&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/dialog&gt;
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
     const modal = document.getElementById('archiveModal');
     const btnProceed = document.getElementById('btnProceed');
     const btnCancel = document.getElementById('btnCancel');
-    let lastFocusedElement; 
+    let lastFocusedElement;
 
-    document.querySelectorAll('.archived-pdf-gateway').forEach(link =&gt; {
-        link.addEventListener('click', function(e) {
-            e.preventDefault(); 
-            lastFocusedElement = document.activeElement; 
-            btnProceed.href = this.href; 
-            modal.showModal(); 
-        });
+    // 3. Find and Intercept Matching Links
+    document.querySelectorAll('a[href$=".pdf"]').forEach(link =&gt; {
+        const isArchived = archivedPDFs.some(archivedUrl =&gt; link.href.includes(archivedUrl));
+
+        if (isArchived) {
+            if (!link.textContent.includes('(Archived)')) {
+                link.textContent = link.textContent.trim() + " (Archived)";
+            }
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); 
+                lastFocusedElement = document.activeElement; 
+                btnProceed.href = this.href; 
+                modal.showModal(); 
+            });
+        }
     });
 
+    // 4. Close logic
     function closeModal() {
         modal.close();
         if (lastFocusedElement) lastFocusedElement.focus(); 
     }
-
     btnCancel.addEventListener('click', closeModal);
     btnProceed.addEventListener('click', closeModal);
-&lt;/script&gt;</code></pre>
+});</code></pre>
 </div>
 
-<h4>Step 2: Content Execution</h4>
-<p>Once Tyler Technologies completes the ticket, the Webmaster workflow becomes entirely automated:</p>
+<h4>Phase 2: Sustainable Future Architecture (Vendor Ticket)</h4>
+<p>For all future publishing, OSS will stop using raw inline URLs. The Webmaster will submit a ticket to Tyler Technologies requesting a new Media Entity bridge.</p>
 <ol>
-  <li>The Webmaster filters the Master Inventory spreadsheet for "Archived" PDFs.</li>
-  <li>The Webmaster logs into Drupal, locates the targeted Media Entities, and simply checks the <code>field_is_archived</code> boolean box.</li>
-  <li>The backend code handles the compliance routing, ensuring the user reads the disclaimer and is offered an accommodation request path before proceeding to the legacy document.</li>
+  <li><strong>The Ticket:</strong> Request a new Drupal Media Type called <strong>"External Document"</strong>. It should have a URL text field (instead of a file upload) and a boolean checkbox (Machine Name: <code>field_is_archived</code>). The "Insert Media" WYSIWYG button must be configured to allow this new document type.</li>
+  <li><strong>The Workflow:</strong> Moving forward, if the Webmaster needs to embed a legacy file, they create an External Document Media profile for it, check the "Archived" box, and embed it using the "Insert Media" tool. Drupal's templating engine will handle the Gateway logic natively.</li>
 </ol>
 </section>
 <section id="improvement-strategy" aria-labelledby="improvement-title">
@@ -220,7 +230,7 @@ This approach prioritizes access to current information while maintaining availa
 <li><strong>Inventory:</strong> Use the Inventory of Record to identify documents and their locations.</li>
 <li><strong>Prioritize:</strong> Use available data and document purpose to determine level of use and importance.</li>
 <li><strong>Classify:</strong> Apply the Current vs Archived decision model using the established workflow.</li>
-<li><strong>Apply in Drupal:</strong> The Webmaster checks the <code>field_is_archived</code> box for prioritized items.</li>
+<li><strong>Deploy Array:</strong> The Webmaster updates the JavaScript array with the newly identified legacy URLs.</li>
 <li><strong>Remediate:</strong> The Accessibility Specialist remediates Priority 1 and 2 documents.</li>
 </ol>
 </section>
@@ -277,7 +287,7 @@ This approach prioritizes access to current information while maintaining availa
   <h3>Step 4: Apply classification</h3>
   <ul>
     <li><strong>Current:</strong> Prioritize for remediation.</li>
-    <li><strong>Archived:</strong> Mark in Drupal to apply archived status.</li>
+    <li><strong>Archived:</strong> Ensure the URL is added to the Webmaster's JavaScript compliance array.</li>
   </ul>
   <h3>Step 5: Move on</h3>
   <ul>
@@ -420,31 +430,22 @@ This approach prioritizes access to current information while maintaining availa
 <section id="appendix-e" aria-labelledby="app-e-title">
   <h2 id="app-e-title">Appendix E: Alternative Gateway Implementations</h2>
   
-  <p class="lede">While the Boolean Checkbox approach is the preferred automated method, alternative workflows are recorded here in the event that Tyler Technologies cannot implement the boolean logic on legacy content blocks.</p>
+  <p class="lede">While the Spreadsheet Array script (Phase 1) is the preferred method for legacy files, alternative fallback workflows are recorded here.</p>
 
-  <h3>Alternative 1: The CSS Class Method</h3>
-  <p>If PDFs are embedded within WYSIWYG text editors (e.g., CKEditor) where boolean fields cannot be natively applied to specific in-line links, a CSS class method may be used.</p>
+  <h3>Alternative 1: The Manual CSS Class Method</h3>
+  <p>If the JavaScript array script is blocked or cannot be deployed globally by the Webmaster, a manual CSS class method may be used.</p>
   <ul>
-    <li><strong>Workflow:</strong> The Webmaster manually edits the HTML link source and appends a specific class (e.g., <code>class="archived-pdf-gateway"</code>).</li>
-    <li><strong>Routing:</strong> The global JavaScript listener targets this class to execute the <code>event.preventDefault();</code> command and display the Gateway modal.</li>
-    <li><strong>Drawback:</strong> This approach increases human error risk and requires minor HTML editing by content creators.</li>
-  </ul>
-
-  <h3>Alternative 2: Direct Twig Template Logic (No Modals)</h3>
-  <p>If modal windows are determined to be too complex to make fully accessible across all devices, an inline Twig routing logic can be applied directly to the theme.</p>
-  <ul>
-    <li><strong>Workflow:</strong> When the <code>field_is_archived</code> boolean is checked, the Twig template intercepts the document display.</li>
-    <li><strong>Routing:</strong> Instead of a modal, the user is presented with a standard webpage containing the disclaimer and an inline button to proceed.</li>
-    <li><strong>Drawback:</strong> This disrupts the visual flow of the page and requires the user to load an entirely new view before accessing the document.</li>
+    <li><strong>Workflow:</strong> The Webmaster must manually edit the HTML link source for every single legacy link in the CMS and append a specific class (e.g., <code>class="archived-pdf-gateway"</code>).</li>
+    <li><strong>Routing:</strong> A smaller global JavaScript listener targets this class to execute the <code>event.preventDefault();</code> command and display the Gateway modal.</li>
+    <li><strong>Drawback:</strong> This approach is highly discouraged for the 1,500 legacy files as it requires hundreds of hours of manual CMS editing and increases human error risk.</li>
   </ul>
 </section>
 
 </main>
 <footer class="site-footer">
-<span>Office of School Safety Digital Accessibility Plan · v5.8 · April 2026</span>
+<span>Office of School Safety Digital Accessibility Plan · v6.0 · April 2026</span>
 </footer>
 </div>
 </body>
 </html>
-
 
